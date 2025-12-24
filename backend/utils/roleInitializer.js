@@ -8,8 +8,7 @@ const defaultRoles = [
     permissions: [
       'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles',
       'create_user', 'edit_user', 'delete_user', 'view_users',
-      'create_role', 'edit_role', 'delete_role', 'view_roles',
-      'manage_settings'
+      'create_role', 'edit_role', 'delete_role', 'view_roles'
     ],
     isDefault: true
   },
