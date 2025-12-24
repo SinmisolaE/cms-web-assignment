@@ -18,17 +18,10 @@ const RoleSchema = new mongoose.Schema({
       'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles', 'view_published_only'
     ]
   }],
-  description: {
-    type: String,
-    required: true
-  },
-  isCustom: {
+  description: String,
+  isDefault: {
     type: Boolean,
     default: false
-  },
-  createdBy: {
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'User'
   }
 });
 
