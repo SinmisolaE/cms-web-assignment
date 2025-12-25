@@ -22,13 +22,23 @@ const generateTokens = (userId) => {
 
 
 // User Login
-const Login = async (req, res) => {
+const login = async (req, res) => {
     try {
         const {email, password} = req.body;
 
-        const user = User.findOne({ email })
-            .select(+password)
+        console.log(`${email} : ${password}`);
+
+        if ((email === null) || (password == null) || (email === "") || password == "") {
+            return res.status(400).json({
+                success: false,
+                error: 'Invalid email or password'
+            });
+        }
+
+        const user = await User.findOne({ email })
             .populate('role');
+
+        
 
         if (!user) {
             return res.status(400).json({
@@ -38,12 +48,12 @@ const Login = async (req, res) => {
         }
 
         // Check password
-        const isMatch = await bcrypt.compare(password, user.password);
+        const isMatch = await bcrypt.compare(password, user.hashedPassword);
         if (!isMatch) {
-        return res.status(401).json({ 
-            success: false, 
-            error: 'Invalid email or password' 
-        });
+            return res.status(401).json({ 
+                success: false, 
+                error: 'Invalid email or password' 
+            });
         }
 
         // Generate tokens
@@ -63,7 +73,7 @@ const Login = async (req, res) => {
     } catch (error) {
         res.status(500).json({
             success: false,
-            error: 'Server error during Login'
+            error: `Server error during Login ${error}`
         });
     }
 
@@ -71,12 +81,23 @@ const Login = async (req, res) => {
 
 }
 
-const Register = async (req, res) => {
+const register = async (req, res) => {
     try {
 
-        const {fullName, lastName, email, password, roleName} = req.body;
+        const {firstName, lastName, email, password, roleName} = req.body;
 
-        const existingUser = User.findOne({ email });
+        if ((firstName === null) || lastName===null
+            || email===null || password===null || roleName === null
+            || (firstName === "") || lastName===""
+            || email==="" || password==="" || roleName === "") {
+
+                return res.status(400).json({
+                    success: false,
+                    error: 'Missing credentials'
+                });
+            }
+
+        const existingUser = await User.findOne({ email });
 
         if (existingUser) {
             return res.status(400).json({
@@ -85,14 +106,14 @@ const Register = async (req, res) => {
             });
         }
 
-        if (password.Length < 6) {
+        if (password.length < 6) {
             return res.status(400).json({
                 success: false,
                 error: 'Password must be atleast 6 characters'
             });
         }
 
-        const role = Role.findOne({ name: roleName});
+        const role = await Role.findOne({ name: roleName});
 
         if (!role) {
             return res.status(400).json({
@@ -106,24 +127,24 @@ const Register = async (req, res) => {
         const hashedPassword = await bcrypt.hash(password, salt);
 
         const user = new User({
-            fullName,
+            firstName,
             lastName,
             email,
-            password: hashedPassword,
-            Role: role._id
+            hashedPassword,
+            role: role._id
         });
 
-        await User.save(user);
-
         const tokens = generateTokens(user._id);
+
+        await user.save(user);
 
         return res.status(201).json({
             success: true,
             message: 'User registered successfully',
             user: {
-                id: createUser._id,
-                fullName: `${firstName} ${lastName}`,
-                role: createUser.role.name
+                id: user._id,
+                fullName: `${user.firstName} ${user.lastName}`,
+                role: user.role.name
             },
             tokens
         });
@@ -132,10 +153,12 @@ const Register = async (req, res) => {
     } catch (error) {
         return res.status(500).json({
             success: false,
-            error: 'Server error occured during Registration'
+            error: `Server error occured during Registration: ${error}`
         });
 
     }
 
 
 }
+
+module.exports = {login, register};

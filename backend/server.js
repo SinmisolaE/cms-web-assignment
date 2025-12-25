@@ -5,6 +5,8 @@ const cors = require("cors");
 
 const { initializeRoles } = require('./utils/roleInitializer');
 
+const authRoutes = require('./routes/authRoute');
+
 dotenv.config();
 
 const app = express();
@@ -13,14 +15,12 @@ const PORT = process.env.PORT || 5000;
 app.use(cors());
 app.use(express.json());
 
-//Test
-app.get('/', (req, res) => {
-    res.send("CMS running successfully");
-});
+// auth
+app.use('/auth', authRoutes);
 
 mongoose.connect(process.env.MONGO_URI).then(async () => {
-    console.log("Database connected");
     app.listen(PORT);
+    console.log(`Database connected - Server running on port ${PORT}`);
     await initializeRoles();
 }).catch(err => {
     console.error('Database connection failed:', err);
