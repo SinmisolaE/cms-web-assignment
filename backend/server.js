@@ -6,6 +6,7 @@ const cors = require("cors");
 const { initializeRoles } = require('./utils/roleInitializer');
 
 const authRoutes = require('./routes/authRoute');
+const roleRoutes = require('./routes/roleRoute');
 
 dotenv.config();
 
@@ -17,6 +18,9 @@ app.use(express.json());
 
 // auth
 app.use('/auth', authRoutes);
+
+// roles endpoint for super admin
+app.use('/roles', roleRoutes);
 
 mongoose.connect(process.env.MONGO_URI).then(async () => {
     app.listen(PORT);

@@ -6,7 +6,7 @@ const createRole = async (req, res) => {
         const {name, permissions, description} = req.body;
 
         if (name === null || permissions === null 
-            || name === string
+            || name === ""
         )
         {
             return res.status(400).json({
@@ -15,10 +15,12 @@ const createRole = async (req, res) => {
             });
         }
 
+        console.log(`${name} - ${permissions}  - ${description}`);
+
         const role = new Role({
             name,
             permissions,
-            description
+            description: description ? description : ""
         });
 
         await role.save();
@@ -42,7 +44,7 @@ const createRole = async (req, res) => {
 
 
 // Get all roles
-const getAllRoles = async () => {
+const getAllRoles = async (req, res) => {
     try {
         const roles = await Role.find();
 
@@ -61,7 +63,8 @@ const getAllRoles = async () => {
 // Update an existing role
 const updateRole = async (req, res) => {
     try {
-        const {id, name, permissions} = req.body;
+        const {name, permissions} = req.body;
+        const id = req.params.id;
 
         if (id == null || ((name == null) && permissions == null)) {
             return res.status(400).json({
@@ -87,6 +90,44 @@ const updateRole = async (req, res) => {
         return res.status(500).json({
             success: false,
             error: `Server error has occurred - ${error}`
-        })
+        });
     }
+}
+
+const deleteRole = async (req, res) => {
+    try {
+        const id = req.params.id;
+
+        if (id === null) {
+            return res.status(400).json({
+                success: false,
+                error: 'Provide required credentials'
+            });
+        }
+
+        const role = await Role.findByIdAndDelete(id);
+        if (!role) {
+            return res.status(404).json({
+                success: false,
+                error: 'Role not found'
+            });
+        }
+
+        return res.status(200).json({
+            success: true,
+            message: 'Role deleted successfully'
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: `Server error has occurred - ${error}`
+        });
+    }
+}
+
+module.exports = {
+    createRole,
+    getAllRoles,
+    updateRole,
+    deleteRole
 }
