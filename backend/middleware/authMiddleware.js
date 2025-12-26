@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // ensure the jwt is valid - 
-const verityToken = async (req, res) => {
+const verifyToken = async (req, res) => {
     try {
         const authHeader = req.headers.authorization;
 
@@ -64,3 +64,5 @@ const verityToken = async (req, res) => {
         });    
     }
 }
+
+module.exports = verifyToken;

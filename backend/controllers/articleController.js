@@ -4,7 +4,7 @@ const User = require('../models/User');
 // Create a new article
 const createArticle = async (req, res) => {
     try {
-        const {id, title, body} = req.body;
+        const { title, body} = req.body;
 
         if (title === null || body === null 
             || title === "" || body === ""
@@ -16,19 +16,10 @@ const createArticle = async (req, res) => {
             });
         }
 
-        // confirm author by id
-        const user = await User.findById({_id: id}).select('-hashedPassword');
-        if (!user) {
-            return res.status(404).json({
-                success: false,
-                error: 'Author not found'
-            });
-        }
-
         const article = new Article({
             title,
             body,
-            author: user._id
+            author: req.user._id
         });
 
         await article.save();

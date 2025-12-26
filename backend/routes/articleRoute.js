@@ -2,19 +2,23 @@ const express = require('express');
 const router = express.Router();
 
 const articleController = require('../controllers/articleController');
+const hasPermission = require('../middleware/permissionMiddleware');
+const verifyToken = require('../middleware/authMiddleware');
 
-router.post('/create', articleController.createArticle);
+router.use(verifyToken);
 
-router.get('/all', articleController.getAllArticles);
+router.post('/create', hasPermission('create_article'), articleController.createArticle);
 
-router.get('/my-articles', articleController.getMyArticles);
+router.get('/all', hasPermission('view_all_articles'), articleController.getAllArticles);
 
-router.get('/articles', articleController.getPublishedArticles);
+router.get('/my-articles', hasPermission('edit_article'), articleController.getMyArticles);
 
-router.put('/:id', articleController.updateArticleTitleAndBody);
+router.get('/articles', hasPermission('view_published_only'), articleController.getPublishedArticles);
 
-router.post('/status', articleController.publishAndUnpublishArticle);
+router.put('/:id', hasPermission('edit_article'), articleController.updateArticleTitleAndBody);
 
-router.delete('/:id', articleController.deleteArticle);
+router.post('/status', hasPermission('publish_article'), articleController.publishAndUnpublishArticle);
+
+router.delete('/:id', hasPermission('delete_article'), articleController.deleteArticle);
 
 module.exports = router;

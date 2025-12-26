@@ -2,11 +2,15 @@ const express = require('express');
 const router = express.Router();
 
 const userController = require('../controllers/userController');
+const hasPermission = require('../middleware/permissionMiddleware');
+const verifyToken = require('../middleware/authMiddleware');
 
-router.get('/', userController.getAllUsers);
+router.use(verifyToken);
 
-router.get('/:role', userController.getUsersByRole);
+router.get('/', hasPermission('view_users'), userController.getAllUsers);
 
-router.delete('/:id', userController.deleteUser);
+router.get('/:role', hasPermission('view_users'), userController.getUsersByRole);
+
+router.delete('/:id', hasPermission('delete_user'), userController.deleteUser);
 
 module.exports = router;
