@@ -1,9 +1,10 @@
 const Article = require('../models/Article');
+const User = require('../models/User');
 
 // Create a new article
 const createArticle = async (req, res) => {
     try {
-        const {title, body} = req.body;
+        const {id, title, body} = req.body;
 
         if (title === null || body === null 
             || title === "" || body === ""
@@ -15,10 +16,19 @@ const createArticle = async (req, res) => {
             });
         }
 
+        // confirm author by id
+        const user = await User.findById({_id: id}).select('-hashedPassword');
+        if (!user) {
+            return res.status(404).json({
+                success: false,
+                error: 'Author not found'
+            });
+        }
+
         const article = new Article({
             title,
             body,
-            author: req.user._id
+            author: user._id
         });
 
         await article.save();
@@ -29,7 +39,11 @@ const createArticle = async (req, res) => {
             article: {
                 id: article._id,
                 title: article.title,
-                author: article.author,
+                author: {
+                    id: user._id,
+                    fullName: `${user.firstName} ${user.lastName}`,
+                    email: user.email
+                },
                 createdAt: article.createdAt
             }
         });
@@ -41,8 +55,7 @@ const createArticle = async (req, res) => {
     }
 }
 
-
-// Get all articles
+// Get all articles - both published and unpublished
 const getAllArticles = async (req, res) => {
     try {
         const articles = await Article.find()
@@ -159,7 +172,7 @@ const publishAndUnpublishArticle = async (req, res) => {
             });
         }
 
-        const article = await Article.findById({ id });
+        const article = await Article.findById({_id: id});
         if (!article) {
             return res.status(404).json({
                 success: false,
@@ -200,24 +213,24 @@ const deleteArticle = async (req, res) => {
             });
         }
 
-        // Get article and compare author id
-        const userArticle = await Article.findById(id);
-        if (!userArticle) {
+        // Get article
+        const findArticle = await Article.findById(id);
+        if (!findArticle) {
             return res.status(404).json({
                 success: false,
                 error: 'Article not found'
             });
         }
 
-        // users could only delete their articles
-        if (userArticle.article.toString() !== userId.toString()) {
+        // users can only delete their articles
+        if (findArticle.article.toString() !== userId.toString()) {
             return res.status(401).json({
                 success: false,
                 error: 'Cannot delete this article'
             });
         }
 
-        const article = await Article.findByIdAndDelete(id);
+        const article = await Article.findByIdAndDelete(findArticle._id);
         if (!article) {
             return res.status(404).json({
                 success: false,

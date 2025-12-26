@@ -4,7 +4,9 @@ const User = require('../models/User');
 // Get all users
 const getAllUsers = async (req, res) => {
     try {
-        const users = await User.find().populate('role');
+        const users = await User.find()
+            .select('-hashedPassword')
+            .populate('role', ('name permissions'));
 
         return res.status(200).json({
             success: true,
@@ -21,11 +23,13 @@ const getAllUsers = async (req, res) => {
 // Get users by role
 const getUsersByRole = async (req, res) => {
     try {
-        const {roleName} = req.body;
+        const roleName = req.params.role;
 
         const users = await User.find()
+            .select('-hashedPassword')
             .populate({
                 path: 'role',
+                select: 'name permissions',
                 match: {name: roleName}
         });
 
@@ -34,7 +38,7 @@ const getUsersByRole = async (req, res) => {
 
         return res.status(200).json({
             success: true,
-            filteredUsers
+            users: filteredUsers
         });
     } catch (error) {
         return res.status(500).json({
