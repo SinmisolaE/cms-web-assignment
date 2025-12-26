@@ -18,6 +18,32 @@ const getAllUsers = async (req, res) => {
     }
 }
 
+// Get users by role
+const getUsersByRole = async (req, res) => {
+    try {
+        const {roleName} = req.body;
+
+        const users = await User.find()
+            .populate({
+                path: 'role',
+                match: {name: roleName}
+        });
+
+        // Filter null presence for unmatched roles
+        const filteredUsers = users.filter(user => user.role !== null);
+
+        return res.status(200).json({
+            success: true,
+            filteredUsers
+        });
+    } catch (error) {
+        return res.status(500).json({
+            success: false,
+            error: `Server error has occurred - ${error}`
+        });
+    }
+}
+
 // Delete a user
 const deleteUser = async (req, res) => {
     try {
@@ -52,5 +78,6 @@ const deleteUser = async (req, res) => {
 
 module.exports = {
     getAllUsers,
+    getUsersByRole,
     deleteUser
 }

@@ -14,3 +14,5 @@ router.put('/:id', articleController.updateArticleTitleAndBody);
 router.put('/status:id', articleController.publishAndUnpublishArticle);
 
 router.delete('/:id', articleController.deleteArticle);
+
+module.exports = router;

@@ -7,6 +7,8 @@ const { initializeRoles } = require('./utils/roleInitializer');
 
 const authRoutes = require('./routes/authRoute');
 const roleRoutes = require('./routes/roleRoute');
+const articleRoutes = require('./routes/articleRoute');
+const userRoutes = require('./routes/userRoute');
 
 dotenv.config();
 
@@ -21,6 +23,11 @@ app.use('/auth', authRoutes);
 
 // roles endpoint for super admin
 app.use('/roles', roleRoutes);
+
+// articles endpoint
+app.use('/article', articleRoutes);
+
+app.use('/users', userRoutes);
 
 mongoose.connect(process.env.MONGO_URI).then(async () => {
     app.listen(PORT);
