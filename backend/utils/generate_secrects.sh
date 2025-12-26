@@ -1,7 +1,7 @@
 ACCESS_TOKEN=$(openssl rand -base64 32)
 REFRESH_TOKEN=$(openssl rand -base64 32)
 
-ENV_FILE=".env"
+ENV_FILE="../.env"
 
 sed -i /^JWT/d $ENV_FILE
 
