@@ -1,0 +1,52 @@
+<div class="container-fluid vh-100 d-flex justify-content-center align-items-center">
+  <div class="card shadow" style="width: 100%; max-width: 400px;">
+    <div class="card-body p-4">
+      <h2 class="text-center mb-4">Login</h2>
+      
+      <form (ngSubmit)="onSubmit()">
+        <div class="mb-3">
+          <label class="form-label">Email</label>
+          <input 
+            type="email" 
+            class="form-control" 
+            placeholder="Enter email"
+            [(ngModel)]="email"
+            name="email"
+            required 
+            [disabled]="isLoading"
+          >
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">Password</label>
+          <input 
+            type="password" 
+            class="form-control" 
+            placeholder="Enter password"
+            [(ngModel)]="password"
+            name="password"
+            required 
+            [disabled]="isLoading"  
+         >
+        </div>
+        
+        <button type="submit" class="btn btn-primary w-100" [disabled]="isLoading">
+          <span *ngIf="!isLoading">Login</span>
+          <span *ngIf="isLoading">
+            <span class="spinner-border spinner-border-sm me-2"></span>
+            Logging in...
+          </span>
+        </button>
+
+        <div *ngIf="errorMessage" class="alert alert-danger mt-3">
+          {{ errorMessage }}
+        </div>
+        
+        <p class="text-center mt-3">
+          Don't have an account? 
+          <a routerLink="/register" class="text-decoration-none">Register</a>
+        </p>
+      </form>
+    </div>
+  </div>
+</div>
