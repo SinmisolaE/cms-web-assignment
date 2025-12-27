@@ -2,7 +2,7 @@ const jwt = require('jsonwebtoken');
 const User = require('../models/User');
 
 // ensure the jwt is valid - 
-const verifyToken = async (req, res) => {
+const verifyToken = async (req, res, next) => {
     try {
         const authHeader = req.headers.authorization;
 
@@ -12,6 +12,8 @@ const verifyToken = async (req, res) => {
                 error: 'Access denied. No token provided.'
             });
         }
+
+        console.log(authHeader);
 
         const token = authHeader.split(' ')[1];
 
@@ -25,17 +27,19 @@ const verifyToken = async (req, res) => {
 
         const isValid = await jwt.verify(token, process.env.JWT_ACCESS_SECRET);
 
-        console.log(`JWT.VERIFU RESULT: ${isValid}`);
+        console.log(`JWT.VERIFU RESULT: ${isValid.id}`);
 
         const user = await User.findById(isValid.id)
-            .select('-password -refreshToken')
-            .populate('role', ('name, permissions'));
+            .select('-hashedPassword -refreshToken')
+            .populate('role', ('name permissions'));
         if (!user) {
             return res.status(404).json({
                 success: false,
                 error: 'User not found. Token invalid.'
             });
         }
+
+        console.log(user);
 
         req.user = user;
 
@@ -65,4 +69,4 @@ const verifyToken = async (req, res) => {
     }
 }
 
-module.exports = verifyToken;
+module.exports = { verifyToken };

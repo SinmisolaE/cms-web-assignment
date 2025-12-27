@@ -6,7 +6,7 @@ const defaultRoles = [
     name: 'SuperAdmin',
     description: 'Has full access to all features',
     permissions: [
-      'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles',
+      'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles', 'view_published_only',
       'create_user', 'edit_user', 'delete_user', 'view_users',
       'create_role', 'edit_role', 'delete_role', 'view_roles'
     ],
@@ -16,7 +16,7 @@ const defaultRoles = [
     name: 'Manager',
     description: 'Can manage articles and moderate content',
     permissions: [
-      'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles',
+      'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles', 'view_published_only',
       'view_users',
       'view_roles'
     ],
@@ -26,7 +26,7 @@ const defaultRoles = [
     name: 'Contributor',
     description: 'Can create and edit own articles',
     permissions: [
-      'create_article', 'edit_article', 'view_all_articles'
+      'create_article', 'edit_article', 'view_all_articles', 'view_published_only'
     ],
     isDefault: true
   },

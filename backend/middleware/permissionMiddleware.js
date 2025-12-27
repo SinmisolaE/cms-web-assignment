@@ -1,7 +1,7 @@
 const User = require('../models/User');
 
-const hasPermission = async (permission) => {
-    return async(req, res, next) => {
+const hasPermission = (permission) => {
+    return (req, res, next) => {
 
         try {
 
@@ -31,4 +31,4 @@ const hasPermission = async (permission) => {
     }
 }
 
-module.exports = hasPermission;
+module.exports = { hasPermission };

@@ -105,15 +105,20 @@ const updateArticleTitleAndBody = async (req, res) => {
         const {title, body} = req.body;
         const id = req.params.id;
 
+        console.log(`Article id: ${id}`);
+
         const userId = req.user._id;
 
-        if (id == null || ((title == null) && body == null)) {
+        console.log(`User id: ${userId}`);
+
+        if (!id || ((!title) && !body)) {
             return res.status(400).json({
                 success: false,
                 error: 'Provide required credentials'
             });
         }
 
+        // Find the article
         const userArticle = await Article.findById(id);
         if (!userArticle) {
             return res.status(404).json({
@@ -122,13 +127,13 @@ const updateArticleTitleAndBody = async (req, res) => {
             });
         }
 
-        if (userArticle.article.toString() !== userId.toString()) {
+        // Ensure user is the author of the article
+        if (userArticle.author.toString() !== userId.toString()) {
             return res.status(401).json({
                 success: false,
                 error: 'Cannot update this article'
             });
         }
-
 
         const article = await Article.findByIdAndUpdate(id, {title, body});
 
