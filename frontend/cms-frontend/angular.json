@@ -23,8 +23,7 @@
               {
                 "glob": "**/*",
                 "input": "public"
-              },
-              "src/netlify.toml"
+              }
             ],
             "styles": [
               "node_modules/bootstrap/dist/css/bootstrap.min.css",
@@ -32,8 +31,7 @@
             ],
             "scripts": [
               "node_modules/bootstrap/dist/js/bootstrap.bundle.min.js"
-            ],
-            "index": "src/index.html"
+            ]
           },
           "configurations": {
             "production": {
