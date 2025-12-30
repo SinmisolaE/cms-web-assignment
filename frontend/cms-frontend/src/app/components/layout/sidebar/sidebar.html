@@ -1,0 +1,77 @@
+<aside class="sidebar" [class.collapsed]="isCollapsed">
+  <!-- Sidebar Header -->
+
+  <!-- User Info -->
+  <div class="user-info p-3 border-bottom" *ngIf="!isCollapsed && getUserInfo()">
+    <div class="d-flex align-items-center">
+      <div class="avatar me-3">
+        <div class="bg-primary rounded-circle d-flex align-items-center justify-content-center" 
+             style="width: 40px; height: 40px;">
+          <span class="text-white fw-bold">{{ getUserInfo()?.firstName?.charAt(0) }}</span>
+        </div>
+      </div>
+      <div>
+        <h6 class="mb-0">{{ getUserInfo()?.firstName && getUserInfo()?.lastName}}</h6>
+        <small class="text-muted d-block">{{ getUserInfo()?.email }}</small>
+        <span class="badge bg-info mt-1">{{ getUserInfo()?.role }}</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Navigation Menu -->
+  <nav class="sidebar-nav">
+    <ul class="nav flex-column">
+      <li class="nav-item" *ngFor="let item of menuItems">
+        <!-- Check if user can see this menu item -->
+        <div *ngIf="canShowMenuItem(item)">
+          
+          <!-- Menu Item with/without children -->
+          <a *ngIf="!item.children" 
+             class="nav-link" 
+             [routerLink]="item.route"
+             routerLinkActive="active"
+             [routerLinkActiveOptions]="{exact: true}">
+            <i [class]="item.icon"></i>
+            <span *ngIf="!isCollapsed">{{ item.label }}</span>
+          </a>
+          
+          <!-- Dropdown for items with children -->
+          <div *ngIf="item.children" class="dropdown">
+            <a href="#" 
+               class="nav-link dropdown-toggle" 
+               data-bs-toggle="collapse" 
+               [attr.data-bs-target]="'#' + getLabelAsId(item.label)"
+               role="button"
+               [attr.aria-expanded]="false">
+              <i [class]="item.icon"></i>
+              <span *ngIf="!isCollapsed">{{ item.label }}</span>
+            </a>
+            <div class="collapse" [id]="getLabelAsId(item.label)">
+              <ul class="nav flex-column ps-3" *ngIf="!isCollapsed">
+                <li class="nav-item" *ngFor="let child of item.children">
+                  <div *ngIf="canShowMenuItem(child)">
+                    <a class="nav-link" 
+                       [routerLink]="child.route"
+                       routerLinkActive="active">
+                      <i [class]="child.icon"></i>
+                      {{ child.label }}
+                    </a>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </div>
+          
+        </div>
+      </li>
+    </ul>
+  </nav>
+
+  <!-- Sidebar Footer -->
+  <div class="sidebar-footer mt-auto p-3 border-top" *ngIf="!isCollapsed">
+    <small class="text-muted">
+      <i class="bi bi-shield-check me-1"></i>
+      Role-Based Access Control
+    </small>
+  </div>
+</aside>

@@ -15,6 +15,8 @@ router.get('/my-articles', hasPermission('edit_article'), articleController.getM
 
 router.get('/articles', hasPermission('view_published_only'), articleController.getPublishedArticles);
 
+router.get('/:id', articleController.getArticleById);
+
 router.put('/:id', hasPermission('edit_article'), articleController.updateArticleTitleAndBody);
 
 router.post('/status', hasPermission('publish_article'), articleController.publishAndUnpublishArticle);

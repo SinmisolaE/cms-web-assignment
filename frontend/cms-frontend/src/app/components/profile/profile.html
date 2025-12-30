@@ -1,0 +1,98 @@
+<div class="profile-container">
+  <div class="profile-card">
+    <!-- Header -->
+    <div class="profile-header">
+      <button class="btn btn-outline-secondary btn-sm" (click)="goBack()">
+        <i class="bi bi-arrow-left me-2"></i>
+        Back to Dashboard
+      </button>
+      <h2 class="profile-title">
+        <i class="bi bi-person-circle me-2"></i>
+        User Profile
+      </h2>
+    </div>
+
+    <!-- Profile Content -->
+    <div *ngIf="user" class="profile-content">
+      <!-- User Avatar and Basic Info -->
+      <div class="profile-info-section">
+        <div class="user-avatar">
+          <div class="avatar-circle">
+            <span class="avatar-initials">{{ user.firstName?.charAt(0) || 'U' }}{{ user.lastName?.charAt(0) || '' }}</span>
+          </div>
+        </div>
+        
+        <div class="user-basic-info">
+          <h3 class="user-name">{{ user.firstName }} {{ user.lastName }}</h3>
+          <p class="user-email">
+            <i class="bi bi-envelope me-2"></i>
+            {{ user.email }}
+          </p>
+        </div>
+      </div>
+
+      <hr class="profile-divider">
+
+      <!-- Role Section -->
+      <div class="info-section">
+        <h4 class="section-title">
+          <i class="bi bi-shield-check me-2"></i>
+          Role
+        </h4>
+        <div class="role-badge">
+          <span class="badge bg-primary">{{ user.role }}</span>
+        </div>
+      </div>
+
+      <hr class="profile-divider">
+
+      <!-- Permissions Section -->
+      <div class="info-section">
+        <h4 class="section-title">
+          <i class="bi bi-lock me-2"></i>
+          Permissions
+        </h4>
+        <div class="permissions-list">
+          <div *ngIf="user.permissions && user.permissions.length > 0" class="permission-grid">
+            <div *ngFor="let permission of user.permissions" class="permission-badge">
+              <i class="bi bi-check-circle me-2 text-success"></i>
+              <span>{{ permission }}</span>
+            </div>
+          </div>
+          <div *ngIf="!user.permissions || user.permissions.length === 0" class="no-permissions">
+            <p class="text-muted">No permissions assigned</p>
+          </div>
+        </div>
+      </div>
+
+      <hr class="profile-divider">
+
+      <!-- Additional Info -->
+      <div class="info-section">
+        <h4 class="section-title">
+          <i class="bi bi-info-circle me-2"></i>
+          Account Information
+        </h4>
+        <div class="account-info">
+          <div class="info-item">
+            <span class="info-label">User ID:</span>
+            <span class="info-value">{{ user._id }}</span>
+          </div>
+          <div class="info-item">
+            <span class="info-label">Account Status:</span>
+            <span class="info-value">
+              <span class="badge bg-success">Active</span>
+            </span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Loading State -->
+    <div *ngIf="!user" class="loading">
+      <div class="spinner-border" role="status">
+        <span class="visually-hidden">Loading...</span>
+      </div>
+    </div>
+  </div>
+</div>

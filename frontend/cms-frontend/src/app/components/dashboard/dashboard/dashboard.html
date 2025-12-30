@@ -1,0 +1,48 @@
+<!-- Dashboard Layout -->
+<div class="dashboard-wrapper">
+  <!-- Sidebar -->
+  <app-sidebar [isCollapsed]="isSidebarCollapsed"></app-sidebar>
+
+  <!-- Main Content -->
+  <div class="main-content" [class.sidebar-collapsed]="isSidebarCollapsed">
+    <!-- Navbar -->
+    <app-navbar (toggleSidebar)="toggleSidebar()"></app-navbar>
+
+    <!-- Content Area -->
+    <main class="content-area p-4">
+      
+
+      <!-- Permission Warning -->
+      <div *ngIf="!canAccessDashboard()" class="alert alert-warning">
+        <i class="bi bi-exclamation-triangle me-2"></i>
+        You don't have permissions to view any dashboard content. 
+        Please contact an administrator.
+      </div>
+
+      <!-- Router Outlet (Pages will load here) -->
+      <div class="content-container">
+        <router-outlet></router-outlet>
+      </div>
+
+      
+    </main>
+
+    <!-- Footer -->
+    <footer class="footer bg-light border-top py-3 px-4">
+      <div class="container-fluid">
+        <div class="row">
+          <div class="col-md-6">
+            <small class="text-muted">
+              © 2025 Content Management System
+            </small>
+          </div>
+          <div class="col-md-6 text-end">
+            <small class="text-muted">
+              Logged in as: {{ authService.getCurrentUser()?.role }}
+            </small>
+          </div>
+        </div>
+      </div>
+    </footer>
+  </div>
+</div>

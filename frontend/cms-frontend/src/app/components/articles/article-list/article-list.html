@@ -1,0 +1,142 @@
+<div class="container-fluid p-0">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="mb-0">📰 Articles</h3>
+      <p class="text-muted mb-0">Manage your content articles</p>
+    </div>
+    
+    <!-- Create Button (if permission) -->
+    <div *ngIf="canCreate">
+      <a routerLink="/dashboard/articles/create" class="btn btn-primary">
+        <i class="bi bi-plus-circle me-1"></i> Create Article
+      </a>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading articles...</p>
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage && !isLoading" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Empty State -->
+  <div *ngIf="!isLoading && articles.length === 0" class="text-center py-5">
+    <i class="bi bi-newspaper fs-1 text-muted mb-3"></i>
+    <h4>No articles found</h4>
+    <p class="text-muted">Start by creating your first article</p>
+    <a *ngIf="canCreate" routerLink="/dashboard/articles/create" class="btn btn-primary">
+      Create Article
+    </a>
+  </div>
+
+  <!-- Articles List -->
+  <div *ngIf="!isLoading && articles.length > 0">
+    <!-- Role Info -->
+    <div class="alert alert-info mb-3">
+      <i class="bi bi-info-circle me-2"></i>
+      You are viewing as: <strong>{{ currentUserRole }}</strong>
+      <span *ngIf="!authService.hasPermission('view_all_articles')">
+        (Only published articles are visible)
+      </span>
+    </div>
+
+    <!-- Articles Table -->
+    <div class="card">
+      <div class="card-body p-0">
+        <div class="table-responsive">
+          <table class="table table-hover mb-0">
+            <thead class="table-light">
+              <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>Status</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let article of articles">
+                <!-- Title -->
+                <td>
+                  <strong>{{ article.title }}</strong>
+                  <div class="text-muted small">
+                    {{ article.body?.substring(0, 50) }}...
+                  </div>
+                </td>
+                
+                <!-- Author -->
+                <td>
+                  <div>{{ article.author?.fullName || 'Unknown' }}</div>
+                  <small class="text-muted">{{ article.author?.email || '' }}</small>
+                </td>
+                
+                <!-- Status -->
+                <td>
+                  <span [class]="article.isPublished ? 'badge bg-success' : 'badge bg-secondary'">
+                    {{ article.isPublished ? 'Published' : 'Draft' }}
+                  </span>
+                  <div *ngIf="article.isPublished && article.publishedAt" class="small text-muted">
+                    {{ formatDate(article.publishedAt) }}
+                  </div>
+                </td>
+                
+                <!-- Created Date -->
+                <td>
+                  {{ formatDate(article.createdAt) }}
+                </td>
+                
+                <!-- Actions -->
+                <td>
+                  <div class="btn-group btn-group-sm">
+                    <!-- View Button -->
+                    <button class="btn btn-outline-primary" (click)="viewArticle(article._id)">
+                      <i class="">View</i>
+                    </button>
+                    
+                    <!-- Edit Button (if permission) -->
+                    <button *ngIf="canUserEditArticle(article)" 
+                            class="btn btn-outline-warning" 
+                            (click)="editArticle(article._id)">
+                      <i class="bi bi-pencil"></i>
+                    </button>
+                    
+                    <!-- Publish/Unpublish Button (if permission) -->
+                    <button *ngIf="canPublish" 
+                            [class]="article.isPublished ? 'btn btn-outline-secondary' : 'btn btn-outline-success'"
+                            (click)="togglePublish(article)">
+                      <i [class]="article.isPublished ? 'bi bi-x-circle' : 'bi bi-check-circle'">Publish/Unpublish</i>
+                    </button>
+                    
+                    <!-- Delete Button (if permission) -->
+                    <button *ngIf="canUserDeleteArticle(article)" 
+                            class="btn btn-outline-danger" 
+                            (click)="deleteArticle(article._id, article.title)">
+                      <i class="bi bi-trash"></i>
+                    </button>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Summary -->
+    <div class="mt-3 text-muted small">
+      Showing {{ articles.length }} article(s)
+      <span *ngIf="!authService.hasPermission('view_all_articles')">
+        (Published only)
+      </span>
+    </div>
+  </div>
+</div>

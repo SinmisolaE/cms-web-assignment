@@ -39,7 +39,7 @@ const verifyToken = async (req, res, next) => {
             });
         }
 
-        console.log(user);
+        console.log(`User is: ${user}`);
 
         req.user = user;
 

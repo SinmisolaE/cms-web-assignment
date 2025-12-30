@@ -1,0 +1,143 @@
+<div class="container-fluid p-0">
+  <!-- Header -->
+  <div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+      <h3 class="mb-0">
+        {{ isEditMode ? 'Edit Article' : 'Create Article' }}
+      </h3>
+      <p class="text-muted mb-0">
+        {{ isEditMode ? 'Update your article content' : 'Write a new article' }}
+      </p>
+    </div>
+    
+    <!-- Back Button -->
+    <div>
+      <button (click)="cancel()" class="btn btn-outline-secondary">
+        <i class="bi bi-arrow-left me-1"></i> Back to Articles
+      </button>
+    </div>
+  </div>
+
+  <!-- Loading State -->
+  <div *ngIf="isLoading" class="text-center py-5">
+    <div class="spinner-border text-primary" role="status">
+      <span class="visually-hidden">Loading...</span>
+    </div>
+    <p class="mt-2">Loading article...</p>
+  </div>
+
+  <!-- Success Message -->
+  <div *ngIf="successMessage" class="alert alert-success">
+    <i class="bi bi-check-circle me-2"></i>
+    {{ successMessage }}
+  </div>
+
+  <!-- Error Message -->
+  <div *ngIf="errorMessage" class="alert alert-danger">
+    <i class="bi bi-exclamation-triangle me-2"></i>
+    {{ errorMessage }}
+  </div>
+
+  <!-- Article Form -->
+  <form *ngIf="!isLoading" (ngSubmit)="onSubmit()" #articleForm="ngForm">
+    <div class="row">
+      <!-- Left Column: Form Fields -->
+      <div class="col-lg-8">
+        <!-- Title -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <label for="title" class="form-label fw-bold">Title *</label>
+            <input
+              type="text"
+              class="form-control form-control-lg"
+              id="title"
+              name="title"
+              [(ngModel)]="title"
+              required
+              placeholder="Enter article title"
+              maxlength="200"
+              [disabled]="isSubmitting"
+            />
+            <div class="text-end mt-1">
+              <small class="text-muted">{{ title.length }}/200 characters</small>
+            </div>
+          </div>
+        </div>
+
+        <!-- Content -->
+        <div class="card mb-3">
+          <div class="card-body">
+            <label for="content" class="form-label fw-bold">Content *</label>
+            <textarea
+              class="form-control"
+              id="content"
+              name="content"
+              [(ngModel)]="content"
+              required
+              rows="15"
+              placeholder="Write your article content here..."
+              [disabled]="isSubmitting"
+            ></textarea>
+            <div class="d-flex justify-content-between mt-2">
+              <small class="text-muted">
+                {{ getWordCount() }} words
+              </small>
+              <small class="text-muted">
+                {{ getCharacterCount() }} characters
+              </small>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+
+        <!-- Publish Settings (if permission) -->
+        <div  class="card mb-3">
+          <div class="card-body">
+            
+            
+            <div class="form-text mt-2">
+              <span *ngIf="!isPublished">
+                Article will be saved as draft
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Submit Buttons -->
+        <div class="card">
+          <div class="card-body">
+            <div class="d-grid gap-2">
+              <!-- Submit Button -->
+              <button
+                type="submit"
+                class="btn btn-primary btn-lg"
+                [disabled]="isSubmitting || !articleForm.form.valid"
+              >
+                <span *ngIf="!isSubmitting">
+                  <i class="bi bi-save me-1"></i>
+                  {{ isEditMode ? 'Update Article' : 'Create Article' }}
+                </span>
+                <span *ngIf="isSubmitting">
+                  <span class="spinner-border spinner-border-sm me-2"></span>
+                  {{ isEditMode ? 'Updating...' : 'Creating...' }}
+                </span>
+              </button>
+
+              <!-- Cancel Button -->
+              <button
+                type="button"
+                class="btn btn-outline-secondary"
+                (click)="cancel()"
+                [disabled]="isSubmitting"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </form>
+</div>

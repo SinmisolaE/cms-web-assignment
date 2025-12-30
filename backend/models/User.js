@@ -27,4 +27,13 @@ const UserSchema = new mongoose.Schema({
     }
 });
 
+// Virtual property for fullName
+UserSchema.virtual('fullName').get(function() {
+    return `${this.firstName} ${this.lastName}`;
+});
+
+// Ensure virtuals are included when converting to JSON
+UserSchema.set('toJSON', { virtuals: true });
+UserSchema.set('toObject', { virtuals: true });
+
 module.exports = mongoose.model('User', UserSchema);

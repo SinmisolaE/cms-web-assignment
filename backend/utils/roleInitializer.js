@@ -16,6 +16,7 @@ const defaultRoles = [
     name: 'Manager',
     description: 'Can manage articles and moderate content',
     permissions: [
+      'view_dashboard',
       'create_article', 'edit_article', 'delete_article', 'publish_article', 'view_all_articles', 'view_published_only',
       'view_users',
       'view_roles'
